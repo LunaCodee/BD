@@ -1,38 +1,26 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const eventRoutes = require("./api/routes/event");
-const userRoutes = require("./api/routes/user");
-
-const mongoose = require("mongoose");
-require("dotenv").config();
-
 const app = express();
-
 var cors = require("cors");
-
+const bodyParser = require("body-parser");
+// const ticketsRouter = require("./routes/tickets");
+const userRouter = require("./api/routes/user");
+require("dotenv").config();
+const mongoose = require("mongoose");
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+// app.use(ticketsRouter);
+app.use(userRouter);
 
 mongoose
-  .connect(process.env.MONGO_CONNECTION, { useNewUrlParser: true })
-  .then(console.log("connected"))
+  .connect(process.env.MONGO_CONNECT)
+  .then(() => {
+    console.log("CONNECTED");
+  })
   .catch((err) => {
-    console.log("DB connection error:", err);
-    console.log(err);
+    console.log("err", err);
   });
 
-app.use(eventRoutes);
-app.use(userRoutes);
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, PUT, DELETE"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
+app.listen(process.env.PORT, () => {
+  console.log("Your app is alive!!!!!");
 });
-
-app.listen(8081);
