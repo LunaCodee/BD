@@ -32,21 +32,8 @@ module.exports.REGISTER = async (req, res) => {
 
         await user.save();
 
-        const token = jwt.sign(
-          {
-            email: user.email,
-            userId: user.id,
-          },
-          process.env.JWT_SECRET,
-          { expiresIn: "1d" },
-          {
-            algorithm: "RS256",
-          }
-        );
-
         res.status(200).json({
           response: "User was saved successfully",
-          jwt: token
         });
       });
     });

@@ -68,7 +68,6 @@ module.exports.CREATE_ANSWER = async (req, res) => {
         return res.status(404).json({ response: "Answer not found" });
       }
   
-      // Increase the gained_likes_number by 1
       answer.gained_likes_number += 1;
   
       await answer.save();
@@ -100,38 +99,39 @@ module.exports.CREATE_ANSWER = async (req, res) => {
     }
   };
 
-// module.exports.GET_ALL_QUESTION_ANSWERS = async (req, res) => {
-//   try {
-//     const { id } = req.params;
+  module.exports.GET_ALL_QUESTION_ANSWERS = async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      const question = await QuestionModel.findById(id);
+      if (!question) {
+        return res.status(404).json({ response: "Question not found" });
+      }
+  
+      const answerIds = question.answers_ids;
+      const answers = await AnswerModel.find({ id: { $in: answerIds } });
+  
+      return res.status(200).json({ response: answers });
+    } catch (error) {
+      console.log("err", error);
+      return res.status(500).json({ response: "ERROR" });
+    }
+  };
 
-//     const question = await QuestionModel.findById(id).populate("answers_ids");
-//     if (!question) {
-//       return res.status(404).json({ response: "Question not found" });
-//     }
+module.exports.DELETE_ANSWER_BY_ID = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-//     const answers = question.answers_ids;
+    const answer = await AnswerModel.findByIdAndDelete(id);
+    if (!answer) {
+      return res.status(404).json({ response: "Answer not found" });
+    }
 
-//     return res.status(200).json({ response: answers });
-//   } catch (error) {
-//     console.log("err", error);
-//     return res.status(500).json({ response: "ERROR" });
-//   }
-// };
+    await QuestionModel.updateOne({}, { $pull: { answers_ids: answer.id } });
 
-// module.exports.DELETE_ANSWER_BY_ID = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     const answer = await AnswerModel.findByIdAndDelete(id);
-//     if (!answer) {
-//       return res.status(404).json({ response: "Answer not found" });
-//     }
-
-//     await QuestionModel.updateOne({}, { $pull: { answers_ids: answer.id } });
-
-//     return res.status(200).json({ response: "Answer was deleted" });
-//   } catch (error) {
-//     console.log("err", error);
-//     return res.status(500).json({ response: "ERROR" });
-//   }
-// };
+    return res.status(200).json({ response: "Answer was deleted" });
+  } catch (error) {
+    console.log("err", error);
+    return res.status(500).json({ response: "ERROR" });
+  }
+};
