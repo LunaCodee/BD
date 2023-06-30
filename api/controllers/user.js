@@ -63,7 +63,7 @@ module.exports.LOGIN = async (req, res) => {
             algorithm: "RS256",
           }
         );
-       
+
         return res.status(200).json({
           response: "You logged in successfully",
           jwt: token,

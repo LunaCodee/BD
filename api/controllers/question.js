@@ -34,6 +34,21 @@ module.exports.GET_ALL_QUESTIONS = async (req, res) => {
   }
 };
 
+module.exports.GET_QUESTION_BY_ID = async (req, res) => {
+  try {
+    const questionId = req.params.id; 
+    const question = await QuestionModel.findById(questionId); 
+    if (!question) {
+      return res.status(404).json({ response: "Question not found" });
+    }
+    res.status(200).json({ question });
+  } catch (err) {
+    console.log("ERR", err);
+    res.status(500).json({ response: "ERROR, please try later" });
+  }
+};
+
+
 
 module.exports.DELETE_QUESTION_BY_ID = async (req, res) => {
   try {
