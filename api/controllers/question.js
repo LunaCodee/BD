@@ -5,7 +5,7 @@ const uniqid = require("uniqid");
 module.exports.CREATE_QUESTION = async (req, res) => {
    try {
     const question = new QuestionModel({
-        id: uniqid(),
+      id: uniqid(),
         question_text:req.body.question_text,
     })
 
@@ -52,7 +52,7 @@ module.exports.GET_QUESTION_BY_ID = async (req, res) => {
 
 module.exports.DELETE_QUESTION_BY_ID = async (req, res) => {
   try {
-    const question = await QuestionModel.deleteOne({ id: req.params.id });
+    const question = await QuestionModel.deleteOne({ id: req.params._id });
     res.status(200).json({ question: question });
   } catch (err) {
     console.log("ERR", err);
